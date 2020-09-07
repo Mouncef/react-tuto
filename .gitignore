@@ -22,3 +22,6 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 /.idea
+/parcel/node_modules/
+/parcel/dist/
+/parcel/.cache/
