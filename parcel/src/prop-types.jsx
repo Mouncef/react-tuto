@@ -1,8 +1,8 @@
 import React, {useCallback, useContext, useMemo, useState} from 'react';
 import { render, createPortal } from 'react-dom';
+import PropTypes from 'prop-types';
 
-function Modal({ onClose }) {
-    throw new Error();
+function Modal({ onClose, children }) {
     return createPortal(
         <>
             <div
@@ -27,7 +27,7 @@ function Modal({ onClose }) {
                             </button>
                         </div>
                         <div className="modal-body">
-                            <p>Modal body text goes here.</p>
+                            {children}
                         </div>
                         <div className="modal-footer">
                             <button
@@ -45,6 +45,15 @@ function Modal({ onClose }) {
             <div className="modal-backdrop fade show"></div>
         </>, document.body
     );
+}
+
+Modal.propTypes = {
+    onClose: PropTypes.func.isRequired,
+    children: PropTypes.node.isRequired
+}
+
+Modal.defaultProps = {
+    children: 'Bonjour'
 }
 
 class ErrorBoundary extends React.Component {
@@ -81,6 +90,14 @@ class ErrorBoundary extends React.Component {
 
 }
 
+function Double({n}) {
+    return `Le double de ${n} est ${n + n}`;
+}
+
+Double.propTypes = {
+    n: PropTypes.number.isRequired
+}
+
 function App() {
     const [modal, setModal] = useState(false);
 
@@ -98,7 +115,6 @@ function App() {
 
     const log = function() {
         console.log('click')
-        throw new Error();
     }
 
     return (
@@ -108,6 +124,9 @@ function App() {
                 <p className="card-text">
                     Some quick example text to build on the card title and make up the
                     bulk of the card's content.
+                </p>
+                <p>
+                    <Double n={1} />
                 </p>
                 <button onClick={showModal} className="btn btn-primary">
                     Go somewhere
