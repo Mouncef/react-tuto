@@ -1,3 +1,7 @@
 body {
     background: transparent;
 }
+
+iframe {
+    display: none;
+}

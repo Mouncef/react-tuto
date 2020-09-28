@@ -1,76 +1,82 @@
 import React, {useCallback, useContext, useMemo, useState} from 'react';
-import { render } from 'react-dom';
+import { render, createPortal } from 'react-dom';
 
-const THEMES = {
-    dark : { background: '#000', color: '#FFF', border: 'solid 1px #FFFF'},
-    light : { background: '#FFF', color: '#000', border: 'solid 1px #000' },
+function Modal({ onClose }) {
+    return createPortal(
+        <>
+            <div
+                className="modal fade show"
+                tabIndex="-1"
+                role="dialog"
+                style={{ display: "block" }}
+            >
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h5 className="modal-title">Modal title</h5>
+                            <button
+                                type="button"
+                                className="close"
+                                data-dismiss="modal"
+                                aria-label="Close"
+                            >
+                <span aria-hidden="true" onClick={onClose}>
+                  &times;
+                </span>
+                            </button>
+                        </div>
+                        <div className="modal-body">
+                            <p>Modal body text goes here.</p>
+                        </div>
+                        <div className="modal-footer">
+                            <button
+                                type="button"
+                                className="btn btn-secondary"
+                                data-dismiss="modal"
+                                onClick={onClose}
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div className="modal-backdrop fade show"></div>
+        </>, document.body
+    );
 }
-
-const ThemeContext = React.createContext({
-    theme: THEMES.dark,
-    toggleTheme: () => {}
-})
 
 function App() {
+    const [modal, setModal] = useState(false);
 
-    const [theme, setTheme] = useState('light');
-
-    const toggleTheme = useCallback(function () {
-        setTheme(t => t === 'light' ? 'dark':'light')
-    }, [])
-    const value = useMemo(function () {
-        return {
-            theme : theme === 'light' ? THEMES.light : THEMES.dark,
-            toggleTheme
-        }
-    }, [toggleTheme, theme])
-    return <div>
-        <ThemeContext.Provider value={value}>
-            <Toolbar/>
-            <ThemeSwitcher />
-        </ThemeContext.Provider>
-    </div>
-}
-
-function ThemeSwitcher() {
-    const {toggleTheme} = useContext(ThemeContext)
-    return <button onClick={toggleTheme}>Switch Thème</button>
-}
-
-function SearchForm() {
-    return <div>
-        <input />
-        <ThemedButtonClass>Rechercher</ThemedButtonClass>
-    </div>
-}
-
-function Toolbar() {
-    return <div>
-        <SearchForm  />
-        <ThemeButton >M'inscrire</ThemeButton>
-    </div>
-}
-
-function ThemeButton({children}) {
-    const {theme} = useContext(ThemeContext)
-    return <button style={theme}>{children}</button>
-
-}
-
-class ThemedButtonClass extends React.Component {
-
-    constructor(props) {
-        super(props);
+    const showModal = function() {
+        setModal(true);
     }
 
-    render() {
-        const {children} = this.props
-        const {theme} = this.context
-        return <button style={theme}>{children}</button>
+    const hideModal = function() {
+        setModal(false);
     }
-}
 
-ThemedButtonClass.contextType = ThemeContext;
+    const style = {
+        transform: "translateY(1px)"
+    }
+
+    return (
+        <div className="card" style={style}>
+            <div className="card-body">
+                <h5 className="card-title">Card Title</h5>
+                <p className="card-text">
+                    Some quick example text to build on the card title and make up the
+                    bulk of the card's content.
+                </p>
+                <button onClick={showModal} className="btn btn-primary">
+                    Go somewhere
+                </button>
+            </div>
+            {modal && <Modal onClose={hideModal} />}
+        </div>
+    )
+}
 
 render(
     <App />,
